@@ -1,6 +1,6 @@
 #include "LandscapeGenerator.h"
 
-#include <windows.h>
+#include <Windows.h>
 
 #include <memory>
 #include <sstream>
@@ -18,20 +18,23 @@ public:
 		PDWORD_PTR result = nullptr;
 		SendMessageTimeout(m_progMan, 0x052C, 0, 0, SMTO_NORMAL, 1000, result);
 
-		// We enumerate all Windows, until we find one, that has the SHELLDLL_DefView as a child.
-		// If we found that window, we take its next sibling and assign it to workerw.
-		EnumWindows([](HWND tophandle, LPARAM topparamhandle)
-					{
-        HWND p = FindWindowEx(tophandle, nullptr, "SHELLDLL_DefView", nullptr);
+		// We enumerate all Windows, until we find one, that has the
+		// SHELLDLL_DefView as a child. If we found that window, we take its next
+		// sibling and assign it to workerw.
+		EnumWindows(
+		    [](HWND tophandle, LPARAM topparamhandle)
+		    {
+			    HWND p = FindWindowEx(tophandle, nullptr, "SHELLDLL_DefView", nullptr);
 
-        if (p != nullptr)
-        {
-            // Gets the WorkerW Window after the current one.
-            s_workerw = FindWindowEx(nullptr, tophandle, "WorkerW", nullptr);
-        }
+			    if (p != nullptr)
+			    {
+				    // Gets the WorkerW Window after the current one.
+				    s_workerw = FindWindowEx(nullptr, tophandle, "WorkerW", nullptr);
+			    }
 
-        return TRUE; },
-					0);
+			    return TRUE;
+		    },
+		    0);
 	}
 
 	~BackgroundWindow()
@@ -62,13 +65,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
 	for (int i = 0; i < 5; ++i)
 	{
-		std::vector<std::pair<Coord<int>, Coord<int>>> coordSets = {
-			{{0, static_cast<int>(0.7 * height)}, {width, static_cast<int>(0.64 * height)}},
-			{{0, static_cast<int>(0.54 * height)}, {width, static_cast<int>(0.38 * height)}},
-			{{0, static_cast<int>(0.36 * height)}, {width, static_cast<int>(0.16 * height)}},
-			{{static_cast<int>(0.25 * width), static_cast<int>(0)}, {width, static_cast<int>(0.4 * height)}}};
+		std::vector<std::pair<Coord<int>, Coord<int>>> coordSets
+		    = { { { 0, static_cast<int>(0.7 * height) }, { width, static_cast<int>(0.64 * height) } },
+			    { { 0, static_cast<int>(0.54 * height) }, { width, static_cast<int>(0.38 * height) } },
+			    { { 0, static_cast<int>(0.36 * height) }, { width, static_cast<int>(0.16 * height) } },
+			    { { static_cast<int>(0.25 * width), static_cast<int>(0) }, { width, static_cast<int>(0.4 * height) } } };
 
-		for (auto &coordSet : coordSets)
+		for (auto & coordSet : coordSets)
 		{
 			coordSet.first.y += (generator() % 200) - 100;
 			coordSet.second.y += (generator() % 200) - 100;

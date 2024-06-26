@@ -1,12 +1,11 @@
 #pragma once
 
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
 #include <ranges>
 #include <span>
 
-template <typename T>
-struct Coord
+template <typename T> struct Coord
 {
 	T x;
 	T y;
@@ -19,7 +18,7 @@ struct Colour
 	uint8_t b;
 };
 
-void drawLine(uint8_t *buffer, int bufferWidth, int x1, int y1, int x2, int y2, const Colour &colour)
+void drawLine(uint8_t * buffer, int bufferWidth, int x1, int y1, int x2, int y2, const Colour & colour)
 {
 	int dx = std::abs(x2 - x1);
 	int dy = std::abs(y2 - y1);
@@ -29,7 +28,7 @@ void drawLine(uint8_t *buffer, int bufferWidth, int x1, int y1, int x2, int y2, 
 
 	while (true)
 	{
-		uint8_t *pixelView = &buffer[((y1 * bufferWidth + x1) * 4)];
+		uint8_t * pixelView = &buffer[((y1 * bufferWidth + x1) * 4)];
 		pixelView[0] = colour.r;
 		pixelView[1] = colour.g;
 		pixelView[2] = colour.b;
@@ -53,7 +52,7 @@ void drawLine(uint8_t *buffer, int bufferWidth, int x1, int y1, int x2, int y2, 
 	}
 }
 
-void drawCircle(uint8_t *buffer, int bufferWidth, int centerX, int centerY, int radius, const Colour &colour)
+void drawCircle(uint8_t * buffer, int bufferWidth, int centerX, int centerY, int radius, const Colour & colour)
 {
 	int N = 2 * radius + 1;
 	for (int i = 0; i < N; ++i)
@@ -64,7 +63,7 @@ void drawCircle(uint8_t *buffer, int bufferWidth, int centerX, int centerY, int 
 			int y = j - radius;
 			if (x * x + y * y <= radius * radius + 1)
 			{
-				uint8_t *pixelView = buffer + ((centerY + y) * bufferWidth + (centerX + x)) * 4;
+				uint8_t * pixelView = buffer + ((centerY + y) * bufferWidth + (centerX + x)) * 4;
 				pixelView[0] = colour.r;
 				pixelView[1] = colour.g;
 				pixelView[2] = colour.b;

@@ -40,7 +40,7 @@ auto midpointDisplacement(Coord<int> start, Coord<int> end, int roughness, int v
 	for (int iteration = 0; iteration < num_of_iterations; ++iteration)
 	{
 		std::vector<Coord<int>> points2 { points.begin(), points.end() };
-		for (int i = 0; i < points2.size() - 1; ++i)
+		for (size_t i = 0; i < points2.size() - 1; ++i)
 		{
 			Coord<int> midPoint = { (points2[i].x + points2[i + 1].x) / 2, (points2[i].y + points2[i + 1].y) / 2 };
 			midPoint.y += (generator() % 2 == 0) ? -verticalDisplacement : verticalDisplacement;
@@ -74,7 +74,7 @@ auto drawLayers(const std::vector<Layer> layers, int width, int height, const st
 	for (const auto & layer : layers)
 	{
 		Layer sampledLayer;
-		for (int i = 0; i < (layer.size() - 1); ++i)
+		for (size_t i = 0; i < (layer.size() - 1); ++i)
 		{
 			sampledLayer.push_back(layer[i]);
 			if (layer[i + 1].x - layer[i].x > 1)
@@ -94,7 +94,7 @@ auto drawLayers(const std::vector<Layer> layers, int width, int height, const st
 	size_t bufferSize = width * height * 4;
 	std::unique_ptr<uint8_t> buffer { new uint8_t[bufferSize] };
 	auto backgroundColour = colours[colours.size() - 1];
-	for (int i = 0; i < bufferSize; i += 4)
+	for (size_t i = 0; i < bufferSize; i += 4)
 	{
 		uint8_t * pixel = buffer.get() + i;
 		pixel[0] = backgroundColour.r;
@@ -121,5 +121,5 @@ auto drawLayers(const std::vector<Layer> layers, int width, int height, const st
 		}
 	}
 
-	return std::move(buffer);
+	return buffer;
 }

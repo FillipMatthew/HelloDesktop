@@ -1,4 +1,4 @@
-#include <memory>
+import std;
 
 #include "App.h"
 
@@ -6,10 +6,10 @@ using namespace std;
 
 int main(int argc, char ** argv)
 {
-	if (g_app == nullptr)
+	if (nullptr == g_app)
 		return 1;
 
-	if (!g_app->Initialise())
+	if (false == g_app->Initialise())
 		return 1;
 
 	g_app->Run();

@@ -2,22 +2,16 @@
 
 #pragma once
 
-#include "drawing.h"
+import std;
 
-#include <chrono>
-#include <cstdlib>
-#include <memory>
-#include <random>
-#include <stdexcept>
-#include <string>
-#include <vector>
+#include "Drawing.h"
 
 using Layer = std::vector<Coord<int>>;
 
 void insertSorted(std::vector<Coord<int>> & vec, const Coord<int> & item)
 {
-	std::vector<Coord<int>>::iterator iter = vec.begin();
-	while (iter != vec.end())
+	std::vector<Coord<int>>::const_iterator iter = vec.cbegin();
+	while (vec.cend() != iter)
 	{
 		if (iter->x <= item.x)
 			++iter;
@@ -28,9 +22,9 @@ void insertSorted(std::vector<Coord<int>> & vec, const Coord<int> & item)
 	vec.insert(iter, item);
 }
 
-auto midpointDisplacement(Coord<int> start, Coord<int> end, int roughness, int verticalDisplacement = 0, int num_of_iterations = 16)
+std::vector<Coord<int>> midpointDisplacement(Coord<int> start, Coord<int> end, int roughness, int verticalDisplacement = 0, int num_of_iterations = 16)
 {
-	if (verticalDisplacement == 0)
+	if (0 == verticalDisplacement)
 		verticalDisplacement = (start.y + end.y) / 2;
 
 	// Create a random number generator with the random seed
@@ -39,21 +33,21 @@ auto midpointDisplacement(Coord<int> start, Coord<int> end, int roughness, int v
 	std::vector points { start, end };
 	for (int iteration = 0; iteration < num_of_iterations; ++iteration)
 	{
-		std::vector<Coord<int>> points2 { points.begin(), points.end() };
+		std::vector<Coord<int>> points2 { points.cbegin(), points.cend() };
 		for (size_t i = 0; i < points2.size() - 1; ++i)
 		{
 			Coord<int> midPoint = { (points2[i].x + points2[i + 1].x) / 2, (points2[i].y + points2[i + 1].y) / 2 };
-			midPoint.y += (generator() % 2 == 0) ? -verticalDisplacement : verticalDisplacement;
+			midPoint.y += (0 == (generator() % 2)) ? -verticalDisplacement : verticalDisplacement;
 			insertSorted(points, midPoint);
 		}
 
-		verticalDisplacement *= pow(2, -roughness);
+		verticalDisplacement *= std::pow(2, -roughness);
 	}
 
 	return points;
 }
 
-auto drawLayers(const std::vector<Layer> layers, int width, int height, const std::string & colourPaletteKeyword)
+std::unique_ptr<std::uint8_t[]> drawLayers(const std::vector<Layer> layers, int width, int height, const std::string & colourPaletteKeyword)
 {
 	std::vector<Colour> colours;
 	// if (colourPaletteKeyword)
@@ -64,7 +58,7 @@ auto drawLayers(const std::vector<Layer> layers, int width, int height, const st
 	// if (colours.empty() || colourMap.size() < (layers.size() + 1))
 	// {
 	colours = { Colour { 224, 157, 195 }, Colour { 204, 98, 158 }, Colour { 138, 79, 130 }, Colour { 99, 28, 68 },
-		        Colour { 82, 7, 49 },     Colour { 38, 3, 23 },    Colour { 163, 203, 240 } };
+	            Colour { 82, 7, 49 },     Colour { 38, 3, 23 },    Colour { 163, 203, 240 } };
 	// }
 
 	if (colours.size() < (layers.size() + 1))
@@ -92,11 +86,11 @@ auto drawLayers(const std::vector<Layer> layers, int width, int height, const st
 	}
 
 	size_t bufferSize = width * height * 4;
-	std::unique_ptr<uint8_t> buffer { new uint8_t[bufferSize] };
-	auto backgroundColour = colours[colours.size() - 1];
+	std::unique_ptr<std::uint8_t[]> buffer = std::make_unique<std::uint8_t[]>(bufferSize);
+	Colour backgroundColour = colours[colours.size() - 1];
 	for (size_t i = 0; i < bufferSize; i += 4)
 	{
-		uint8_t * pixel = buffer.get() + i;
+		std::uint8_t * pixel = buffer.get() + i;
 		pixel[0] = backgroundColour.r;
 		pixel[1] = backgroundColour.g;
 		pixel[2] = backgroundColour.b;
@@ -111,7 +105,7 @@ auto drawLayers(const std::vector<Layer> layers, int width, int height, const st
 		for (size_t j = 0; j < layer.size(); ++j)
 		{
 			auto coord = layer[j];
-			if (coord.y < 0)
+			if (0 > coord.y)
 				coord.y = 0;
 
 			if (coord.y >= height)

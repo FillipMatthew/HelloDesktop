@@ -1,8 +1,7 @@
-#include <chrono>
-#include <memory>
-#include <random>
-#include <sstream>
-#include <thread>
+// Platform headers must precede `import std;` (GCC modules)
+#include "Platform.h"
+
+import std;
 
 #include "BackgroundWindowManager.h"
 #include "LandscapeGenerator.h"
@@ -14,9 +13,9 @@ CRenderer::CRenderer()
 {
 }
 
-bool CRenderer::Process(int x, int y, int width, int height)
+bool CRenderer::Process(const int x, const int y, const int width, const int height)
 {
-	auto now = chrono::system_clock::now();
+	chrono::system_clock::time_point now = chrono::system_clock::now();
 	if (m_lastTime + chrono::seconds(5) > now && width == m_lastWidth && height == m_lastHeight)
 	{
 		if (x != m_lastX || y != m_lastY) // Monitor needs an update but we don't need to regenerate anything
@@ -37,11 +36,11 @@ bool CRenderer::Process(int x, int y, int width, int height)
 	m_lastHeight = height;
 
 	vector<pair<Coord<int>, Coord<int>>> coordSets = { { { 0, static_cast<int>(0.7 * height) }, { width, static_cast<int>(0.64 * height) } },
-		                                               { { 0, static_cast<int>(0.54 * height) }, { width, static_cast<int>(0.38 * height) } },
-		                                               { { 0, static_cast<int>(0.36 * height) }, { width, static_cast<int>(0.16 * height) } },
-		                                               { { static_cast<int>(0.25 * width), static_cast<int>(0) }, { width, static_cast<int>(0.4 * height) } } };
+	                                                   { { 0, static_cast<int>(0.54 * height) }, { width, static_cast<int>(0.38 * height) } },
+	                                                   { { 0, static_cast<int>(0.36 * height) }, { width, static_cast<int>(0.16 * height) } },
+	                                                   { { static_cast<int>(0.25 * width), static_cast<int>(0) }, { width, static_cast<int>(0.4 * height) } } };
 
-	for (auto & coordSet : coordSets)
+	for (pair<Coord<int>, Coord<int>> & coordSet : coordSets)
 	{
 		coordSet.first.y += (m_generator() % 200) - 100;
 		coordSet.second.y += (m_generator() % 200) - 100;
@@ -58,9 +57,9 @@ bool CRenderer::Process(int x, int y, int width, int height)
 	return true;
 }
 
-void CRenderer::Render(HDC hDC, int x, int y, int width, int height)
+void CRenderer::Render(HDC hDC, const int x, const int y, const int width, const int height)
 {
-	if (hDC == nullptr || m_landscape == nullptr || width != m_lastWidth || height != m_lastHeight)
+	if (nullptr == hDC || nullptr == m_landscape || width != m_lastWidth || height != m_lastHeight)
 		return;
 
 	HBITMAP hBitmap = CreateBitmap(width, height, 1, 32, m_landscape.get());

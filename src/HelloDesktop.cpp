@@ -1,8 +1,7 @@
-#include <map>
-#include <memory>
-#include <random>
-#include <string>
-#include <thread>
+// Platform headers must precede `import std;` (GCC modules)
+#include "Platform.h"
+
+import std;
 
 #include "App.h"
 #include "BackgroundWindowManager.h"

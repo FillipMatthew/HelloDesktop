@@ -1,3 +1,8 @@
+// Platform headers must precede `import std;` (GCC modules)
+#include "Platform.h"
+
+import std;
+
 #include "BackgroundWindowManager.h"
 
 HWND BackgroundWindowManager::s_workerw = nullptr;

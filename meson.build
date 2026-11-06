@@ -23,7 +23,7 @@ std_module_dep = declare_dependency(sources : bootstrap_std)
 
 win = import('windows')
 
-src = ['src/main.cpp', 'src/HelloDesktop.cpp', 'src/BackgroundWindowManager.cpp', 'src/Renderer.cpp']
+src = ['src/main.cpp', 'src/HelloDesktop.cpp', 'src/BackgroundWindowManager.cpp', 'src/Renderer.cpp', 'src/TrayIcon.cpp']
 src += win.compile_resources('resources/HelloDesktop.rc',
   depend_files : ['resources/HelloDesktop.exe.manifest'],
   include_directories : include_directories('resources')
@@ -33,6 +33,7 @@ src += win.compile_resources('resources/HelloDesktop.rc',
 executable('HelloDesktop',
   src,
   dependencies : std_module_dep,
+  win_subsystem : 'windows',
   link_args : ['-static'],
   install : true,
   install_dir : meson.current_source_dir() / 'bin' / get_option('buildtype')

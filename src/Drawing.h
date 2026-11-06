@@ -25,10 +25,11 @@ void drawLine(std::uint8_t * buffer, int bufferWidth, int x1, int y1, int x2, in
 
 	while (true)
 	{
+		// GDI 32-bit bitmaps are BGRA.
 		std::uint8_t * pixelView = &buffer[((y1 * bufferWidth + x1) * 4)];
-		pixelView[0] = colour.r;
+		pixelView[0] = colour.b;
 		pixelView[1] = colour.g;
-		pixelView[2] = colour.b;
+		pixelView[2] = colour.r;
 		pixelView[3] = 255;
 
 		if (x1 == x2 && y1 == y2)
@@ -61,9 +62,9 @@ void drawCircle(std::uint8_t * buffer, int bufferWidth, int centerX, int centerY
 			if (x * x + y * y <= radius * radius + 1)
 			{
 				std::uint8_t * pixelView = buffer + ((centerY + y) * bufferWidth + (centerX + x)) * 4;
-				pixelView[0] = colour.r;
+				pixelView[0] = colour.b;
 				pixelView[1] = colour.g;
-				pixelView[2] = colour.b;
+				pixelView[2] = colour.r;
 				pixelView[3] = 255;
 			}
 		}

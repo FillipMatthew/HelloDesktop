@@ -65,7 +65,7 @@ std::unique_ptr<std::uint8_t[]> drawLayers(const std::vector<Layer> layers, int 
 		throw std::runtime_error("Num of colours should be bigger than the num of layers");
 
 	std::vector<Layer> finalLayers;
-	for (const auto & layer : layers)
+	for (const Layer & layer : layers)
 	{
 		Layer sampledLayer;
 		for (size_t i = 0; i < (layer.size() - 1); ++i)
@@ -75,10 +75,9 @@ std::unique_ptr<std::uint8_t[]> drawLayers(const std::vector<Layer> layers, int 
 			{
 				double m = static_cast<double>(layer[i + 1].y - layer[i].y) / (layer[i + 1].x - layer[i].x);
 				double n = layer[i].y - m * layer[i].x;
-				auto r = [m, n](int x) { return static_cast<int>(std::round(m * x + n)); };
 
 				for (int j = layer[i].x + 1; j < layer[i + 1].x; ++j)
-					sampledLayer.push_back({ j, r(j) });
+					sampledLayer.push_back({ j, static_cast<int>(std::round(m * j + n)) });
 			}
 		}
 
@@ -91,9 +90,10 @@ std::unique_ptr<std::uint8_t[]> drawLayers(const std::vector<Layer> layers, int 
 	for (size_t i = 0; i < bufferSize; i += 4)
 	{
 		std::uint8_t * pixel = buffer.get() + i;
-		pixel[0] = backgroundColour.r;
+		// GDI 32-bit bitmaps are BGRA.
+		pixel[0] = backgroundColour.b;
 		pixel[1] = backgroundColour.g;
-		pixel[2] = backgroundColour.b;
+		pixel[2] = backgroundColour.r;
 		pixel[3] = 255;
 	}
 
@@ -101,10 +101,10 @@ std::unique_ptr<std::uint8_t[]> drawLayers(const std::vector<Layer> layers, int 
 
 	for (size_t i = 0; i < finalLayers.size(); ++i)
 	{
-		const auto & layer = finalLayers[i];
+		const Layer & layer = finalLayers[i];
 		for (size_t j = 0; j < layer.size(); ++j)
 		{
-			auto coord = layer[j];
+			Coord<int> coord = layer[j];
 			if (0 > coord.y)
 				coord.y = 0;
 
